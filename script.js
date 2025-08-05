@@ -4,43 +4,50 @@
  */ 
 
 
-let usuario = prompt("Ingrese su nombre");
-let contraseña = prompt("Ingrese su contraseña");
-
 const usuariosAdmin = [
   { nombre: "alejandro", jerarquia: "Owner", contraseña: "123" },
   { nombre: "mateo", jerarquia: "Admin", contraseña: "1234" },
   { nombre: "benjamin", jerarquia: "Mod", contraseña: "12345" }
 ];
 
-let encontrado = false;
+const boton = document.getElementById("loginBtn");
+const mensaje = document.getElementById("mensaje");
 
-for (let i = 0; i < usuariosAdmin.length; i++) {
-  if (
-    usuariosAdmin[i].nombre.toLowerCase() === usuario.toLowerCase() &&
-    usuariosAdmin[i].contraseña === contraseña
-  ) {
-    encontrado = true;
+boton.addEventListener("click", () => {
+  const usuario = document.getElementById("usuario").value.toLowerCase();
+  const contraseña = document.getElementById("contraseña").value;
 
-    let rol = usuariosAdmin[i].jerarquia;
-    
-    if (rol === "Owner") {
-      alert("Bienvenido " + usuario + ", tenés control total del sistema.");
-    } else if (rol === "Admin") {
-      alert("Hola Admin " + usuario + ", acceso concedido.");
-    } else if (rol === "Mod") {
-      alert("Hola Moderador " + usuario);
-    } else {
-      alert("Hola " + usuario + ", tu rol es: " + rol);
+  let encontrado = false;
+
+  for (let i = 0; i < usuariosAdmin.length; i++) {
+    const user = usuariosAdmin[i];
+    if (user.nombre.toLowerCase() === usuario && user.contraseña === contraseña) {
+      encontrado = true;
+      localStorage.setItem("usuarioLogueado", JSON.stringify(user));
+
+     
+      let recibimiento = "";
+
+      switch (user.jerarquia) {
+        case "Owner":
+          recibimiento = `Bienvenido ${user.nombre}, tenés control total del sistema.`;
+          break;
+        case "Admin":
+          recibimiento = `Hola Admin ${user.nombre}, acceso concedido.`;
+          break;
+        case "Mod":
+          recibimiento = `Hola Moderador ${user.nombre}.`;
+          break;
+        default:
+          recibimiento = `Hola ${user.nombre}, tu rol es: ${user.jerarquia}`;
+      }
+
+      mensaje.textContent = recibimiento;
+      break;
     }
-    
-    break;
   }
-}
 
-if (!encontrado) {
-  alert("Usuario o contraseña incorrectos. Reintentá.");
-}
-
-
-
+  if (!encontrado) {
+    mensaje.textContent = "Usuario o contraseña incorrectos.";
+  }
+});
